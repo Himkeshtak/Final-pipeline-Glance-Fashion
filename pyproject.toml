@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fashion-multi-expert-indexer"
+version = "1.0.0"
+description = "Multi-expert fashion image indexing pipeline with Qdrant named vectors"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "huggingface-hub>=0.30,<2",
+    "numpy>=1.26,<3",
+    "open-clip-torch>=3.3,<3.4",
+    "Pillow>=10.3,<13",
+    "qdrant-client>=1.12,<2",
+    "torch>=2.2,<3",
+    "torchvision>=0.17,<1",
+    "tqdm>=4.66,<5",
+    "transformers>=4.51.3,<5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2,<10",
+    "ruff>=0.9,<1",
+]
+
+[project.scripts]
+fashion-index = "fashion_indexer.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["fashion_indexer*"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

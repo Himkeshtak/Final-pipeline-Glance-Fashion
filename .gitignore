@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+dist/
+build/
+val_test2020/
+# Runtime data and downloaded inputs
+qdrant_fashion_db/
+*.index-manifest.json
+images/*
+!images/.gitkeep
+
+# Local logs and model caches
+*.log
+.cache/
+huggingface_cache/
