@@ -7,6 +7,7 @@ import pytest
 import torch
 from PIL import Image
 
+from fashion_indexer.config import ModelSettings, PipelineSettings, build_index_manifest
 from fashion_indexer.device import DeviceSpec
 from fashion_indexer.errors import ModelInferenceError
 from fashion_indexer.experts import (
@@ -116,3 +117,17 @@ def test_tensor_conversion_normalizes_and_validates_dimension() -> None:
 def test_tensor_conversion_rejects_nonfinite_values() -> None:
     with pytest.raises(ModelInferenceError, match="NaN or infinite"):
         tensor_to_unit_vector(torch.tensor([[float("nan"), 1.0]]), 2, "test_vector")
+
+
+def test_region_model_is_a_paired_clip_space_for_text_retrieval() -> None:
+    settings = ModelSettings()
+    manifest = build_index_manifest(
+        settings,
+        PipelineSettings(),
+        compute_dtype="float32",
+    )
+
+    assert settings.region_model_id == "openai/clip-vit-large-patch14"
+    assert manifest["embedding_contract"]["region_vector"]["extractor"] == (
+        "clip_get_image_features"
+    )

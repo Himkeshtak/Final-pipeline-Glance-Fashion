@@ -16,6 +16,7 @@ from fashion_indexer.config import (
 )
 from fashion_indexer.database import FashionVectorStore
 from fashion_indexer.device import resolve_device
+from fashion_indexer.environment import load_environment
 from fashion_indexer.errors import FashionIndexerError
 from fashion_indexer.experts import MultiExpertEncoder
 from fashion_indexer.pipeline import FashionIndexingPipeline
@@ -53,6 +54,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--text-threshold", type=float, default=0.25)
     parser.add_argument("--model-cache-dir", type=Path, default=None)
     parser.add_argument(
+        "--env-file",
+        type=Path,
+        default=None,
+        help="Optional dotenv file; otherwise .env is discovered from the working directory.",
+    )
+    parser.add_argument(
         "--recreate-collection",
         action="store_true",
         help="Delete and rebuild the configured collection before indexing.",
@@ -75,6 +82,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     _configure_logging(args.log_level)
 
     try:
+        environment = load_environment(args.env_file)
+        if environment.dotenv_path is not None:
+            LOGGER.info("Loaded environment variables from %s", environment.dotenv_path)
+        if environment.huggingface_token_configured:
+            LOGGER.info(
+                "Hugging Face authentication is configured via %s",
+                environment.huggingface_token_source,
+            )
+        else:
+            LOGGER.info("No Hugging Face token is configured; public model access will be used")
+
         pipeline_settings = PipelineSettings(
             images_dir=args.images_dir,
             db_path=args.db_path,

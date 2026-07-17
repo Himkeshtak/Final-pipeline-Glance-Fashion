@@ -218,28 +218,27 @@ class FashionClipEncoder:
 
 
 class RegionSceneEncoder:
-    """Full-image ViT CLS encoder producing 768-dimensional scene vectors."""
+    """Full-image paired CLIP encoder producing 768-dimensional scene vectors."""
 
     def __init__(self, settings: ModelSettings, device_spec: DeviceSpec) -> None:
         self.device_spec = device_spec
         try:
-            from transformers import AutoImageProcessor, ViTModel
+            from transformers import AutoProcessor, CLIPModel
 
-            self.processor = AutoImageProcessor.from_pretrained(
+            self.processor = AutoProcessor.from_pretrained(
                 settings.region_model_id,
                 **_hub_kwargs(settings.cache_dir, settings.region_revision),
             )
-            self.model = ViTModel.from_pretrained(
+            self.model = CLIPModel.from_pretrained(
                 settings.region_model_id,
-                add_pooling_layer=False,
                 **_transformer_load_kwargs(
                     settings.cache_dir, settings.region_revision, device_spec
                 ),
             )
-            hidden_size = int(self.model.config.hidden_size)
-            if hidden_size != REGION_VECTOR_SIZE:
+            projection_size = int(self.model.config.projection_dim)
+            if projection_size != REGION_VECTOR_SIZE:
                 raise ValueError(
-                    f"checkpoint hidden_size is {hidden_size}, not {REGION_VECTOR_SIZE}"
+                    f"checkpoint projection_dim is {projection_size}, not {REGION_VECTOR_SIZE}"
                 )
             self.model.to(device_spec.device)
             self.model.eval()
@@ -254,13 +253,14 @@ class RegionSceneEncoder:
             encoded = self.processor(images=full_image, return_tensors="pt")
             inputs = move_batch_to_device(encoded, self.device_spec)
             with torch.inference_mode():
-                outputs = self.model(pixel_values=inputs["pixel_values"])
-                features = outputs.last_hidden_state[:, 0, :]
-            return tensor_to_unit_vector(features, REGION_VECTOR_SIZE, "region_vector")
+                features = self.model.get_image_features(pixel_values=inputs["pixel_values"])
+            return tensor_to_unit_vector(
+                _coerce_feature_tensor(features), REGION_VECTOR_SIZE, "region_vector"
+            )
         except ModelInferenceError:
             raise
         except Exception as exc:
-            raise ModelInferenceError(f"Region ViT inference failed: {exc}") from exc
+            raise ModelInferenceError(f"Region CLIP inference failed: {exc}") from exc
 
 
 class VibeAestheticEncoder:
@@ -329,7 +329,7 @@ class MultiExpertEncoder:
         self.detector = GarmentCropDetector(settings, device_spec)
         LOGGER.info("Loading Fashion-CLIP garment encoder")
         self.garment_encoder = FashionClipEncoder(settings, device_spec)
-        LOGGER.info("Loading full-image region ViT encoder")
+        LOGGER.info("Loading full-image region CLIP encoder")
         self.region_encoder = RegionSceneEncoder(settings, device_spec)
         LOGGER.info("Loading full-image OpenCLIP vibe encoder")
         self.vibe_encoder = VibeAestheticEncoder(settings, device_spec)

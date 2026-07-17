@@ -33,8 +33,8 @@ class ModelSettings:
     detector_revision: str = "a2bb814dd30d776dcf7e30523b00659f4f141c71"
     fashion_model_id: str = "patrickjohncyh/fashion-clip"
     fashion_revision: str = "7e3ba62ce16b379a1ab479346b66f192e76f51b7"
-    region_model_id: str = "google/vit-base-patch16-224"
-    region_revision: str = "3f49326eb077187dfe1c2a2bb15fbd74e6ab91e3"
+    region_model_id: str = "openai/clip-vit-large-patch14"
+    region_revision: str = "32bd64288804d66eefd0ccbe215aa642df71cc41"
     vibe_model_id: str = "laion/CLIP-ViT-L-14-DataComp.XL-s13B-b90K"
     vibe_revision: str = "84c9828e63dc9a9351d1fe637c346d4c1c4db341"
     garment_labels: tuple[str, ...] = DEFAULT_GARMENT_LABELS
@@ -153,7 +153,7 @@ def build_index_manifest(
             },
             REGION_VECTOR_NAME: {
                 "size": REGION_VECTOR_SIZE,
-                "extractor": "last_hidden_state_cls",
+                "extractor": "clip_get_image_features",
                 "normalization": "l2",
             },
             VIBE_VECTOR_NAME: {
