@@ -122,6 +122,77 @@ loading text models. It refuses to compare vectors from different checkpoints. T
 image-only Google ViT region representation is intentionally unsupported because it has no paired
 text tower; indexes created with that representation must be rebuilt with this version.
 
+## Architecture assessment
+
+### 1. Modular code: separation of logic and data
+
+The application logic is separated from the image dataset and generated vector data. Indexing is
+divided into configuration, image preprocessing, expert encoders, Qdrant persistence, and pipeline
+orchestration under `fashion_indexer/`. Retrieval independently separates LLM query routing, text
+encoding, database search, score fusion, schemas, and orchestration under `fashion_retriever/`.
+The command-line modules assemble these components and pass runtime settings into them rather than
+embedding dataset-specific behavior in the model classes.
+
+The pipeline classes receive their preprocessors, encoders, parsers, and stores through their
+constructors. The indexing encoder and retrieval parser also follow explicit protocols, allowing
+tests or alternative implementations to be substituted without changing orchestration logic.
+Dataset paths, Qdrant paths, collection names, model cache paths, device selection, and retrieval
+limits are configurable through dataclasses and command-line arguments. Raw datasets, local Qdrant
+storage, model caches, and credentials are excluded from Git.
+
+Two portability limitations remain. Qdrant payloads currently store absolute `image_path` values,
+and the committed benchmark reports are generated artifacts rather than application source. A
+deployment shared across machines should store a stable image ID or dataset-relative URI and keep
+repeatable benchmark outputs in a dedicated artifact store or CI report.
+
+### 2. Scalability to one million images
+
+The retrieval algorithm is suitable in principle for a million-image collection. Qdrant performs
+approximate nearest-neighbor search independently in the three named vector indexes. The
+application retrieves a fixed number of candidates from each branch, unions at most three times
+that candidate limit, and performs weighted fusion only over that bounded set. With the default
+limit of 100, fusion processes no more than 300 unique candidates, so application-side reranking
+does not grow linearly with the total number of indexed images.
+
+The current local embedded Qdrant configuration is intended for development and the 800-image
+evaluation index, not a production million-image workload. One million uncompressed vectors at
+512 + 768 + 768 float32 dimensions require approximately 8.2 GB for vector values alone, before
+HNSW graphs, payloads, indexes, temporary segments, backups, and replicas. At that scale, the same
+retrieval code should connect to a Qdrant server or cluster configured with adequate memory and
+storage, sharding, replication, on-disk vectors, payload indexes, quantization where acceptable,
+and tuned HNSW construction/search parameters.
+
+Large-scale ingestion would also require operational changes: GPU-backed batch inference,
+multiple indexing workers, bounded producer/consumer queues, bulk upserts, durable checkpoints,
+failure retry queues, and monitoring. The existing file-hash deduplication, skip-existing behavior,
+batched upserts, and index manifest provide a safe foundation, but the present single-process,
+one-image-at-a-time model inference would take too long for an initial one-million-image build.
+
+### 3. Zero-shot capability
+
+The system is zero-shot at retrieval time: it does not depend on a fixed catalog of supervised
+fashion labels. The LLM converts a previously unseen conversational description into garment,
+region, and vibe sub-queries, while the three paired text/image embedding models compare those
+phrases directly with indexed images. Fashion-CLIP supplies fashion-domain semantics, OpenAI CLIP
+aligns scene text with the full image, and the LAION DataComp OpenCLIP tower captures broader
+composition and aesthetic language. Grounding DINO also uses open-vocabulary garment prompts
+rather than a closed detector class ID.
+
+This makes the system useful for novel combinations such as materials, silhouettes, locations,
+lighting, subcultures, and moods that were never defined as application labels. Zero-shot does not
+mean perfect recognition, however. Performance can weaken for rare garments, subtle fabric
+differences, negation, counting, precise spatial relationships, niche cultural aesthetics, or
+concepts poorly represented in the models' pretraining data. LLM query expansion can also add or
+remove nuance from the original request.
+
+The included benchmark illustrates both sides. For "Vintage oversized leather jacket at a rainy
+train station," the top results consistently contained outerwear, several contained leather, and
+one strongly represented a wet urban environment, even though the application has no explicit
+labels for those concepts. None of the top ten clearly showed a train station, so the result is a
+useful qualitative zero-shot match rather than proof of complete compositional understanding.
+Formal comparison should use a human-labeled query set and report metrics such as Precision@K,
+Recall@K, MRR, and nDCG.
+
 ## Input safety and repeat runs
 
 - Files are discovered deterministically and filtered by supported suffix.
