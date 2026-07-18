@@ -1,3 +1,4 @@
+hf-xet>=1.1,<2
 huggingface-hub>=0.30,<2
 numpy>=1.26,<3
 openai>=1.68,<3

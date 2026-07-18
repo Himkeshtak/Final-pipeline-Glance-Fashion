@@ -1,0 +1,192 @@
+{
+  "timestamp": "2026-07-18T03:27:26.983745+00:00",
+  "query": "Vintage oversized leather jacket at a rainy train station",
+  "device": "cpu (float32)",
+  "indexed_points": 800,
+  "candidate_limit_per_branch": 100,
+  "top_k": 10,
+  "routing": {
+    "garment_query": "vintage oversized leather jacket, made of genuine leather, featuring a relaxed fit, with a slightly distressed texture, and classic lapel collar, designed for a casual yet stylish look.",
+    "region_query": "a rainy train station, characterized by industrial architecture, with metal and glass structures, wet pavement reflecting the surroundings, and a moody atmosphere created by overcast skies and raindrops.",
+    "vibe_query": "vintage era, evoking a nostalgic and moody mood, with soft, diffused lighting, reminiscent of 1970s and 1980s styling subcultures, emphasizing a rugged and urban visual aesthetic.",
+    "alpha": 0.5,
+    "beta": 0.3,
+    "gamma": 0.2
+  },
+  "candidate_counts": {
+    "garment_vector": 100,
+    "region_vector": 100,
+    "vibe_vector": 100
+  },
+  "timings_seconds": {
+    "model_loading": 128.99898589999066,
+    "llm_routing": 4.251142499997513,
+    "parallel_text_encoding": 0.6710180000081891,
+    "qdrant_batch_search": 0.04208210000069812,
+    "score_fusion": 0.0022289999906206504,
+    "warm_query_total": 4.966471599997021,
+    "process_total": 135.81622429999697
+  },
+  "results": [
+    {
+      "rank": 1,
+      "id": "3dfeb454-2884-4c00-9cc2-e16ee28099ff",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\3c9135567d29729161aa465507e5efad.jpg",
+      "final_score": 0.208597862935563,
+      "branch_scores": {
+        "garment": 0.2903137578584686,
+        "region": 0.10921776235055304,
+        "vibe": 0.1533782765058141
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\3c9135567d29729161aa465507e5efad.jpg",
+        "file_hash": "05afcc1677382566b3cb837fdd7a92f6",
+        "timestamp": "2026-07-17T19:15:46.853016+00:00"
+      }
+    },
+    {
+      "rank": 2,
+      "id": "724157ce-357e-4dfa-b3e1-f469346828c0",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\852b5baea8b49dd88b168e45205bb7e6.jpg",
+      "final_score": 0.20844586031660622,
+      "branch_scores": {
+        "garment": 0.28629593522554947,
+        "region": 0.10110596454276823,
+        "vibe": 0.17483051670500516
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\852b5baea8b49dd88b168e45205bb7e6.jpg",
+        "file_hash": "a14bf7f276405192a12ea290f1cc3206",
+        "timestamp": "2026-07-17T18:48:39.891359+00:00"
+      }
+    },
+    {
+      "rank": 3,
+      "id": "4883f940-3c51-4644-a7bf-b133486e962b",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\3b8410e6c6828c7ba45a7bc0e3e73112.jpg",
+      "final_score": 0.20397878225769164,
+      "branch_scores": {
+        "garment": 0.27427960782863925,
+        "region": 0.10106216423768813,
+        "vibe": 0.1826016453603278
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\3b8410e6c6828c7ba45a7bc0e3e73112.jpg",
+        "file_hash": "3b4b01d98305b80a501c0b4e5f4f38f4",
+        "timestamp": "2026-07-17T20:21:04.533182+00:00"
+      }
+    },
+    {
+      "rank": 4,
+      "id": "a6931ffc-20a7-4f49-860a-b70b051abf92",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\f6068396a6f5442a4883c131a170f183.jpg",
+      "final_score": 0.20307427844580772,
+      "branch_scores": {
+        "garment": 0.2661661799365949,
+        "region": 0.11242910716221727,
+        "vibe": 0.18131228164422547
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\f6068396a6f5442a4883c131a170f183.jpg",
+        "file_hash": "e42b18ae01871ff461e31216c7636042",
+        "timestamp": "2026-07-17T20:02:58.808121+00:00"
+      }
+    },
+    {
+      "rank": 5,
+      "id": "406d82b4-ac3e-48bc-894d-594f185b038b",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\8e87687c1064403a1cd1500b516a7ad8.jpg",
+      "final_score": 0.19312952116429621,
+      "branch_scores": {
+        "garment": 0.2540198608225259,
+        "region": 0.10435885267340034,
+        "vibe": 0.17405967475506567
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\8e87687c1064403a1cd1500b516a7ad8.jpg",
+        "file_hash": "51d46d224570155d9cc829223b8e20d7",
+        "timestamp": "2026-07-17T20:50:19.506249+00:00"
+      }
+    },
+    {
+      "rank": 6,
+      "id": "f120a188-e51c-4f29-bdab-a2808c49af7a",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\816a95bab929fa5ea04400a4f848f81a.jpg",
+      "final_score": 0.18808802513539427,
+      "branch_scores": {
+        "garment": 0.30252976129854486,
+        "region": 0.0,
+        "vibe": 0.18411572243060914
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\816a95bab929fa5ea04400a4f848f81a.jpg",
+        "file_hash": "e35521bd5325f89bee7a89a2eee83f91",
+        "timestamp": "2026-07-17T21:34:00.763620+00:00"
+      }
+    },
+    {
+      "rank": 7,
+      "id": "82b1bd9b-1d91-4d36-b0e2-d847e0e899d2",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\a89e8cd2564a7e5050c8aa5c5c24c18d.jpg",
+      "final_score": 0.184697653688292,
+      "branch_scores": {
+        "garment": 0.23494262462336524,
+        "region": 0.1145930713624366,
+        "vibe": 0.16424209983939198
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\a89e8cd2564a7e5050c8aa5c5c24c18d.jpg",
+        "file_hash": "d1d86c10dbf36fed5eb0b5017b336422",
+        "timestamp": "2026-07-17T20:42:22.649140+00:00"
+      }
+    },
+    {
+      "rank": 8,
+      "id": "693bb30f-c9de-401d-95f0-737b4b60e464",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\7f8a675045a7845310c18b3d25a5532a.jpg",
+      "final_score": 0.17959572467031126,
+      "branch_scores": {
+        "garment": 0.22670163166430202,
+        "region": 0.10578718313658503,
+        "vibe": 0.17254376948592365
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\7f8a675045a7845310c18b3d25a5532a.jpg",
+        "file_hash": "a7b499a1fb7b39bedad645f4f6b9cce9",
+        "timestamp": "2026-07-17T21:04:54.191733+00:00"
+      }
+    },
+    {
+      "rank": 9,
+      "id": "a8bf1bcd-ae4e-40ac-8278-d0dc41eb632c",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\124dc5471306edcadc0d89bfc7353939.jpg",
+      "final_score": 0.1763333294049279,
+      "branch_scores": {
+        "garment": 0.2796028096633809,
+        "region": 0.0,
+        "vibe": 0.1826596228661873
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\124dc5471306edcadc0d89bfc7353939.jpg",
+        "file_hash": "6fe713c5fd2e1cea0ef978516dd9fb2d",
+        "timestamp": "2026-07-17T21:42:27.885786+00:00"
+      }
+    },
+    {
+      "rank": 10,
+      "id": "631df3f3-0332-4f97-a866-989ecd1bfa7c",
+      "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\52e55009a74b4fa557d5cefb1aa00393.jpg",
+      "final_score": 0.17324883560924412,
+      "branch_scores": {
+        "garment": 0.2566859211009249,
+        "region": 0.14968625019593887,
+        "vibe": 0.0
+      },
+      "payload": {
+        "image_path": "D:\\Final-pipeline-Glance-Fashion\\val_test2020\\test\\52e55009a74b4fa557d5cefb1aa00393.jpg",
+        "file_hash": "1c21c24a865a5342b1e1d7e3ad0f102b",
+        "timestamp": "2026-07-17T20:55:26.539295+00:00"
+      }
+    }
+  ]
+}

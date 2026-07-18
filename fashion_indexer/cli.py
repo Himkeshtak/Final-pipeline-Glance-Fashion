@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import random
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -36,6 +37,18 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--db-path", type=Path, default=Path("qdrant_fashion_db"))
     parser.add_argument("--collection", default=COLLECTION_NAME)
     parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument(
+        "--max-images",
+        type=int,
+        default=None,
+        help="Randomly select at most this many discovered images before indexing.",
+    )
+    parser.add_argument(
+        "--shuffle-seed",
+        type=int,
+        default=2020,
+        help="Deterministic seed used with --max-images (default: 2020).",
+    )
     parser.add_argument(
         "--recursive",
         action=argparse.BooleanOptionalAction,
@@ -118,10 +131,21 @@ def main(argv: Sequence[str] | None = None) -> int:
             max_image_dimension=pipeline_settings.max_image_dimension,
             extensions=pipeline_settings.image_extensions,
         )
-        paths = preprocessor.discover()
+        discovered_paths = preprocessor.discover()
+        paths = select_random_subset(
+            discovered_paths,
+            max_images=args.max_images,
+            seed=args.shuffle_seed,
+        )
         device_spec = resolve_device(pipeline_settings.device, pipeline_settings.precision)
         LOGGER.info("Selected compute device: %s", device_spec.description)
-        LOGGER.info("Discovered %d supported image file(s)", len(paths))
+        LOGGER.info("Discovered %d supported image file(s)", len(discovered_paths))
+        if len(paths) != len(discovered_paths):
+            LOGGER.info(
+                "Selected a reproducible random subset of %d image(s) with seed %d",
+                len(paths),
+                args.shuffle_seed,
+            )
         index_manifest = build_index_manifest(
             model_settings,
             pipeline_settings,
@@ -193,3 +217,20 @@ def _configure_logging(level: str) -> None:
         datefmt="%Y-%m-%dT%H:%M:%S",
         stream=sys.stderr,
     )
+
+
+def select_random_subset(
+    paths: Sequence[Path],
+    *,
+    max_images: int | None,
+    seed: int,
+) -> list[Path]:
+    """Return all paths or a reproducibly shuffled subset without replacement."""
+
+    selected = list(paths)
+    if max_images is None:
+        return selected
+    if max_images < 1:
+        raise FashionIndexerError("--max-images must be at least 1.")
+    random.Random(seed).shuffle(selected)
+    return selected[:max_images]

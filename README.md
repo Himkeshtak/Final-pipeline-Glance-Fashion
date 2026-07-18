@@ -62,6 +62,8 @@ Useful options:
 --device {auto,cuda,mps,cpu}
 --precision {auto,float32,float16,bfloat16}
 --batch-size 8
+--max-images 800
+--shuffle-seed 2020
 --box-threshold 0.25
 --text-threshold 0.25
 --env-file .env
